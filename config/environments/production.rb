@@ -75,4 +75,7 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  config.rabbitmq.host = ENV["RABBITMQ_HOST"]
+  config.rabbitmq.port = ENV["RABBITMQ_PORT"]
 end

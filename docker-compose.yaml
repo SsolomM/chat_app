@@ -5,8 +5,10 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - rabbitmq
     environment:
       RAILS_ENV: development
+      DATABASE_HOST: db
     volumes:
       - "./:/rails"
   db:
@@ -18,7 +20,26 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - pgdata:/var/lib/postgresql/data 
+      - pgdata:/var/lib/postgresql/data
+  
+  rabbitmq:
+    # image: rabbitmq:3
+    image: rabbitmq:management
+    ports:
+      - 5672:5672
+      - 15692:15692
+      - 15672:15672
+  
+  workers:
+    build: .
+    command: bundle exec rake jobs:consumers
+    depends_on: 
+      - rabbitmq
+      - db
+    environment:
+      RAILS_ENV: development
+    volumes:
+      - "./:/rails"
 
 volumes:
   pgdata:

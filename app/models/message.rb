@@ -41,6 +41,6 @@ class Message < ApplicationRecord
 
     # serialization
     def as_json(options = {})
-        super(only: [ :number, :sender, :text ])
+        super(only: [ :number, :sender, :text, :app_token, :chat_number ])
     end
 end

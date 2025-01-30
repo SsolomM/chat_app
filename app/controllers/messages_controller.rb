@@ -8,14 +8,13 @@ class MessagesController < ApplicationController
     def create
         new_message = params.require(:message).permit(:text, :sender)
         message = @chat.messages.new(new_message)
-        if message.save
-            render json: { message_number: message.number }, status: 200
-        else
+        begin
+            MessagePublisher.publish("messages", message)
             render json: {
-                error_code: "M001",
-                error_message: I18n.t("message.message_not_complete"),
-                errors: message.errors.messages
-            }, status: 406
+                message: message.as_json
+            }
+        rescue Exception => e
+            render json: e.messages
         end
     end
 
